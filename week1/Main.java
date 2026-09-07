@@ -1,4 +1,4 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 class Account {
@@ -15,18 +15,14 @@ class Account {
 
 public class Main {
 
-    static HashMap<Long, Account> accounts = new HashMap<>();
+    static ArrayList<Account> accounts = new ArrayList<>();
     static Scanner sc = new Scanner(System.in);
 
     static void createAccount() {
         System.out.print("Enter Account Number: ");
         long number = sc.nextLong();
-        sc.nextLine();
 
-        if (accounts.containsKey(number)) {
-            System.out.println("Account already exists!");
-            return;
-        }
+        sc.nextLine();
 
         System.out.print("Enter Account Holder Name: ");
         String name = sc.nextLine();
@@ -34,12 +30,7 @@ public class Main {
         System.out.print("Enter Initial Deposit: ");
         double balance = sc.nextDouble();
 
-        if (balance < 0) {
-            System.out.println("Invalid deposit!");
-            return;
-        }
-
-        accounts.put(number, new Account(number, name, balance));
+        accounts.add(new Account(number, name, balance));
 
         System.out.println("Account created successfully!");
     }
@@ -48,63 +39,63 @@ public class Main {
         System.out.print("Enter Account Number: ");
         long number = sc.nextLong();
 
-        Account a = accounts.get(number);
+        for (Account a : accounts) {
+            if (a.accountNumber == number) {
+                System.out.print("Enter Deposit Amount: ");
+                double amount = sc.nextDouble();
 
-        if (a == null) {
-            System.out.println("Account not found!");
-            return;
+                if (amount > 0) {
+                    a.balance += amount;
+                    System.out.println("Amount deposited successfully!");
+                    System.out.println("Current Balance: " + a.balance);
+                } else {
+                    System.out.println("Invalid amount!");
+                }
+                return;
+            }
         }
 
-        System.out.print("Enter Deposit Amount: ");
-        double amount = sc.nextDouble();
-
-        if (amount > 0) {
-            a.balance += amount;
-            System.out.println("Amount deposited successfully!");
-            System.out.println("Current Balance: " + a.balance);
-        } else {
-            System.out.println("Invalid amount!");
-        }
+        System.out.println("Account not found!");
     }
 
     static void withdraw() {
         System.out.print("Enter Account Number: ");
         long number = sc.nextLong();
 
-        Account a = accounts.get(number);
+        for (Account a : accounts) {
+            if (a.accountNumber == number) {
+                System.out.print("Enter Withdrawal Amount: ");
+                double amount = sc.nextDouble();
 
-        if (a == null) {
-            System.out.println("Account not found!");
-            return;
+                if (amount <= 0) {
+                    System.out.println("Invalid amount!");
+                } else if (amount > a.balance) {
+                    System.out.println("Insufficient balance!");
+                } else {
+                    a.balance -= amount;
+                    System.out.println("Amount withdrawn successfully!");
+                    System.out.println("Current Balance: " + a.balance);
+                }
+                return;
+            }
         }
 
-        System.out.print("Enter Withdrawal Amount: ");
-        double amount = sc.nextDouble();
-
-        if (amount <= 0) {
-            System.out.println("Invalid amount!");
-        } else if (amount > a.balance) {
-            System.out.println("Insufficient balance!");
-        } else {
-            a.balance -= amount;
-            System.out.println("Amount withdrawn successfully!");
-            System.out.println("Current Balance: " + a.balance);
-        }
+        System.out.println("Account not found!");
     }
 
     static void checkBalance() {
         System.out.print("Enter Account Number: ");
         long number = sc.nextLong();
 
-        Account a = accounts.get(number);
-
-        if (a == null) {
-            System.out.println("Account not found!");
-            return;
+        for (Account a : accounts) {
+            if (a.accountNumber == number) {
+                System.out.println("Account Holder: " + a.name);
+                System.out.println("Balance: " + a.balance);
+                return;
+            }
         }
 
-        System.out.println("Account Holder: " + a.name);
-        System.out.println("Balance: " + a.balance);
+        System.out.println("Account not found!");
     }
 
     static void displayAccounts() {
@@ -115,23 +106,11 @@ public class Main {
 
         System.out.println("\n--- All Accounts ---");
 
-        for (Account a : accounts.values()) {
+        for (Account a : accounts) {
             System.out.println("Account Number: " + a.accountNumber);
             System.out.println("Name: " + a.name);
             System.out.println("Balance: " + a.balance);
             System.out.println("--------------------");
-        }
-    }
-
-    static void deleteAccount() {
-        System.out.print("Enter Account Number: ");
-        long number = sc.nextLong();
-
-        if (accounts.containsKey(number)) {
-            accounts.remove(number);
-            System.out.println("Account deleted successfully!");
-        } else {
-            System.out.println("Account not found!");
         }
     }
 
@@ -144,8 +123,7 @@ public class Main {
             System.out.println("3. Withdraw");
             System.out.println("4. Check Balance");
             System.out.println("5. Display All Accounts");
-            System.out.println("6. Delete Account");
-            System.out.println("7. Exit");
+            System.out.println("6. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
@@ -172,10 +150,6 @@ public class Main {
                     break;
 
                 case 6:
-                    deleteAccount();
-                    break;
-
-                case 7:
                     System.out.println("Thank you!");
                     return;
 
